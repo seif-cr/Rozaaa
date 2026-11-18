@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0;font-size:14px}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>ميزان المحبة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Readex+Pro:wght@500;700&display=swap">
+<style>
+  /* Layout: one narrow column, a gauge card as the centerpiece, a reply line under it, a hidden "certificate" that unlocks at 100% */
+  :root {
+    --bg: #EEF0FB;
+    --surface: #FFFFFF;
+    --fg: #1B1C3A;
+    --muted: #5E6086;
+    --accent: #E8442F;
+    --accent-2: #138A70;
+    --track: #D9DCF2;
+    --line: #C9CDEB;
+    --font-display: 'Readex Pro', 'Cairo', system-ui, sans-serif;
+    --font-body: 'Cairo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14152B;
+      --surface: #1E2040;
+      --fg: #EDEEFB;
+      --muted: #A3A6D0;
+      --accent: #FF7262;
+      --accent-2: #43D1B1;
+      --track: #2C2F58;
+      --line: #34376A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14152B;
+    --surface: #1E2040;
+    --fg: #EDEEFB;
+    --muted: #A3A6D0;
+    --accent: #FF7262;
+    --accent-2: #43D1B1;
+    --track: #2C2F58;
+    --line: #34376A;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    padding-block: 28px 44px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap {
+    max-width: 460px;
+    margin-inline: auto;
+    display: grid;
+    gap: 20px;
+    text-align: right;
+  }
+  .tag {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(32px, 9vw, 44px);
+    line-height: 1.2;
+    margin: 4px 0 6px;
+    text-wrap: balance;
+  }
+  .sub { margin: 0; color: var(--muted); }
+
+  .card {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 20px 18px 22px;
+  }
+  .gauge { display: block; width: 100%; height: auto; max-width: 100%; direction: ltr; }
+  .gauge .track { stroke: var(--track); }
+  .gauge text { fill: var(--muted); font-family: var(--font-body); font-size: 12px; }
+  .needle { stroke: var(--fg); }
+  .hub { fill: var(--fg); }
+
+  .readout {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 2px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 58px;
+    line-height: 1;
+    margin-top: 2px;
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+  }
+  .readout small { font-size: 24px; color: var(--muted); }
+
+  .slider-row { margin-top: 18px; direction: ltr; }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 34px;
+    background: transparent;
+    margin: 0;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--track);
+  }
+  input[type="range"]::-moz-range-track {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--track);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px;
+    height: 30px;
+    margin-top: -10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 4px solid var(--surface);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 4px solid var(--surface);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  input[type="range"]:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 4px; border-radius: 8px; }
+
+  .rule { margin: 12px 0 0; font-size: 13px; color: var(--muted); text-align: center; }
+
+  .reply {
+    margin: 0;
+    min-height: 3.4em;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.5;
+    text-wrap: balance;
+  }
+  .reply.done { color: var(--accent-2); }
+
+  .cert {
+    display: grid;
+    gap: 8px;
+    border: 2px dashed var(--accent-2);
+    border-radius: 16px;
+    padding: 18px;
+    background: var(--surface);
+  }
+  .cert h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.3;
+    margin: 0;
+  }
+  .cert p { margin: 0; color: var(--muted); }
+  .btn {
+    justify-self: start;
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 16px;
+    color: #fff;
+    background: var(--accent-2);
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 22px;
+    cursor: pointer;
+  }
+  :root[data-theme="dark"] .btn { color: #0E1A17; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0E1A17; } }
+  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .answer { color: var(--fg) !important; font-weight: 600; }
+
+  .bit {
+    position: absolute;
+    top: -12px;
+    width: 8px;
+    height: 14px;
+    border-radius: 2px;
+    animation: fall 1.6s ease-in forwards;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(380px) rotate(520deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bit { display: none; }
+  }
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <p class="tag">اختبار رسمي · مخصوص لروزان</p>
+    <h1>روزان، بتحبيني قد إيه؟</h1>
+    <p class="sub">اسحبي السلايدر يا روزان وشوفي الميزان هيقول إيه.</p>
+  </header>
+
+  <section class="card" aria-label="ميزان المحبة">
+    <svg class="gauge" viewBox="0 0 300 175" role="img" aria-label="عداد نصف دائري">
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" style="stop-color: var(--accent)"/>
+          <stop offset="1" style="stop-color: var(--accent-2)"/>
+        </linearGradient>
+      </defs>
+      <path class="track" d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke-width="18" stroke-linecap="round" pathLength="100"/>
+      <path id="fill" d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#grad)" stroke-width="18" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="65"/>
+      <g id="ticks"></g>
+      <line id="needle" class="needle" x1="150" y1="150" x2="150" y2="48" stroke-width="4" stroke-linecap="round"/>
+      <circle class="hub" cx="150" cy="150" r="9"/>
+      <text x="30" y="172" text-anchor="middle">0</text>
+      <text x="270" y="172" text-anchor="middle">100</text>
+    </svg>
+    <div class="readout" aria-hidden="true"><span id="num">35</span><small>%</small></div>
+
+    <div class="slider-row">
+      <input id="love" type="range" min="0" max="100" step="1" value="35" aria-label="نسبة المحبة">
+    </div>
+    <p class="rule">الحد الأدنى المقبول: 100%</p>
+  </section>
+
+  <p id="reply" class="reply" aria-live="polite">لسه تحت النص. الميزان مش مقتنع يا روزان.</p>
+
+  <section id="cert" class="cert" hidden>
+    <h2>شهادة صداقة VIP باسم روزان</h2>
+    <p>صالحة مدى الحياة. بتتجدد بالقهوة.</p>
+    <button id="coffee" class="btn" type="button">قهوة النهاردة؟</button>
+    <p id="answer" class="answer" hidden>تمام يا روزان، اتفقنا. قوليلي الوقت وأنا أحجز.</p>
+  </section>
+</div>
+
+<script>
+  (function () {
+    var slider = document.getElementById('love');
+    var num = document.getElementById('num');
+    var fill = document.getElementById('fill');
+    var needle = document.getElementById('needle');
+    var reply = document.getElementById('reply');
+    var cert = document.getElementById('cert');
+    var coffee = document.getElementById('coffee');
+    var answer = document.getElementById('answer');
+    var card = document.querySelector('.card');
+    var ticks = document.getElementById('ticks');
+    var reached = false;
+
+    // tick marks every 10%, placed on the same 180-degree scale as the needle
+    var svgNS = 'http://www.w3.org/2000/svg';
+    for (var i = 0; i <= 10; i++) {
+      var a = Math.PI * (1 - i / 10);
+      var r1 = 96, r2 = i % 5 === 0 ? 84 : 89;
+      var t = document.createElementNS(svgNS, 'line');
+      t.setAttribute('x1', 150 + r1 * Math.cos(a));
+      t.setAttribute('y1', 150 - r1 * Math.sin(a));
+      t.setAttribute('x2', 150 + r2 * Math.cos(a));
+      t.setAttribute('y2', 150 - r2 * Math.sin(a));
+      t.setAttribute('stroke', 'var(--muted)');
+      t.setAttribute('stroke-width', i % 5 === 0 ? '2.5' : '1.5');
+      t.setAttribute('stroke-linecap', 'round');
+      ticks.appendChild(t);
+    }
+
+    var lines = [
+      [0, 'صفر يا روزان؟ طب إحنا بنتكلم ليه أصلاً 😒'],
+      [5, 'ده قليل أوي يا روزان. الميزان نفسه اتحرج.'],
+      [25, 'لسه تحت النص. الميزان مش مقتنع يا روزان.'],
+      [50, 'كده بتجامليني يا روزان. زوّدي شوية.'],
+      [70, 'حلو، بس الميزان شايف إنك تقدري أكتر يا روزان.'],
+      [85, 'قربنا يا روزان! فاضل شوية صغيرين.'],
+      [95, 'واحد بس ناقص! ما تبخليش يا روزان 😅'],
+      [100, 'أيوه كده يا روزان! الميزان استقر. صاحبة VIP رسمي 👑']
+    ];
+
+    function pick(v) {
+      var out = lines[0][1];
+      for (var i = 0; i < lines.length; i++) if (v >= lines[i][0]) out = lines[i][1];
+      return out;
+    }
+
+    function confetti() {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var colors = ['var(--accent)', 'var(--accent-2)', 'var(--fg)', 'var(--muted)'];
+      for (var i = 0; i < 28; i++) {
+        var b = document.createElement('span');
+        b.className = 'bit';
+        b.style.left = (Math.random() * 100) + '%';
+        b.style.background = colors[i % colors.length];
+        b.style.animationDelay = (Math.random() * 0.4) + 's';
+        card.appendChild(b);
+        (function (el) { setTimeout(function () { el.remove(); }, 2400); })(b);
+      }
+    }
+
+    function render() {
+      var v = Number(slider.value);
+      num.textContent = v;
+      fill.setAttribute('stroke-dashoffset', String(100 - v));
+      needle.setAttribute('transform', 'rotate(' + (-90 + v * 1.8) + ' 150 150)');
+      reply.textContent = pick(v);
+      var done = v === 100;
+      reply.classList.toggle('done', done);
+      cert.hidden = !done;
+      if (done && !reached) confetti();
+      reached = done;
+    }
+
+    slider.addEventListener('input', render);
+    coffee.addEventListener('click', function () {
+      answer.hidden = false;
+      coffee.hidden = true;
+    });
+    render();
+  })();
+</script>
+
+</body>
+</html>
